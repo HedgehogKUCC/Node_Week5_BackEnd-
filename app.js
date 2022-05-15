@@ -25,4 +25,11 @@ app.use('/users', usersRouter);
 app.use('/signup', signupRouter);
 app.use('/posts', postsRouter);
 
+app.use((req, res, next) => {
+    res.status(404).send({
+        result: false,
+        msg: '無此路由',
+    });
+});
+
 module.exports = app;
