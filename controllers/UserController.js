@@ -11,7 +11,7 @@ module.exports = {
             const data = await UserModel.findById(id, 'name avatar');
             success(res, data);
         } catch(err) {
-            return appError(err.message, next);
+            next(err);
         }
     },
     async insertUser(req, res, next) {
@@ -47,7 +47,7 @@ module.exports = {
 
             success(res, result, 201);
         } catch(err) {
-            return appError(err.message, next);
+            next(err);
         }
     }
 }

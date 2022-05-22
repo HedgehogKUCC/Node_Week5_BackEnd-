@@ -15,7 +15,7 @@ module.exports = {
             }).sort(timeSort);
             success(res, result);
         } catch(err) {
-            return appError(err.message, next);
+            next(err);
         }
     },
     async insertPost(req, res, next) {
@@ -42,7 +42,7 @@ module.exports = {
             const result = await PostModel.create(data);
             success(res, result, 201);
         } catch(err) {
-            return appError(err.message, next);
+            next(err);
         }
     },
 }
