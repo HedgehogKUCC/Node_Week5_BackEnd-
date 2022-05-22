@@ -5,6 +5,7 @@ const postSchema = new mongoose.Schema(
         userID: {
             type: mongoose.Schema.ObjectId,
             ref: 'User',
+            required: [true, '請登入帳號']
         },
         content: {
             type: String,
@@ -14,6 +15,7 @@ const postSchema = new mongoose.Schema(
         image: {
             type: String,
             trim: true,
+            default: '',
         },
         createdAt: {
             type: Date,

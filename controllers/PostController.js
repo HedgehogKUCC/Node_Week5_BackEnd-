@@ -1,4 +1,5 @@
 const PostModel = require('../models/Post');
+const UserModel = require('../models/User');
 const { success, error } = require('../service/responseHandle');
 
 module.exports = {
@@ -31,6 +32,12 @@ module.exports = {
 
             if ( !content ) {
                 error(res, '【貼文內容】必填');
+                return;
+            }
+
+            const hasUserID = await UserModel.findById(userID).exec();
+            if ( !hasUserID ) {
+                error(res, '請註冊帳號');
                 return;
             }
 
