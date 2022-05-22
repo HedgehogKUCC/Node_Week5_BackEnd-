@@ -39,13 +39,51 @@ app.use((req, res, next) => {
     next(error);
 });
 
-app.use((err, req, res, next) => {
+const resErrorProd = (err, res) => {
     if ( err.isOperational ) {
-        res.status(err.statusCode).send({
+        if ( err.columns ) {
+            return res.status(err.statusCode).send({
+                result: false,
+                msg: err.message,
+                columns: err.errors,
+            });
+        }
+        return res.status(err.statusCode).send({
             result: false,
             msg: err.message,
         });
     }
+    console.log('重大錯誤 => ', err);
+    res.status(err.statusCode).send({
+        result: false,
+        msg: '系統錯誤，請洽系統管理員',
+    });
+}
+
+const resErrorDev = (err, res) => {
+    res.status(err.statusCode).send({
+        result: false,
+        name: err.name,
+        msg: err.message,
+        stack: err.stack,
+        error: err,
+    });
+}
+
+app.use((err, req, res, next) => {
+    err.statusCode = err.statusCode || 500;
+
+    if ( process.env.NODE_ENV === 'development' ) {
+        return resErrorDev(err, res);
+    }
+
+    if ( err.name === 'ValidationError' ) {
+        err.message = '資料欄位填寫有誤';
+        err.columns = err.errors;
+        err.isOperational = true;
+        return resErrorProd(err, res);
+    }
+    resErrorProd(err, res);
 });
 
 process.on('unhandledRejection', (err, promise) => {
