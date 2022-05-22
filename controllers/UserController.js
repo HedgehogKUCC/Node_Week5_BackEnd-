@@ -1,19 +1,20 @@
 const bcrypt = require('bcryptjs');
 
 const UserModel = require('../models/User');
-const { success, error } = require('../service/responseHandle');
+const appError = require('../service/appError');
+const success = require('../service/responseSuccess');
 
 module.exports = {
-    async getUser(req, res) {
+    async getUser(req, res, next) {
         try {
             const { id } = req.params;
             const data = await UserModel.findById(id, 'name avatar');
             success(res, data);
         } catch(err) {
-            error(res, err.message);
+            return appError(err.message, next);
         }
     },
-    async insertUser(req, res) {
+    async insertUser(req, res, next) {
         try {
             const data = req.body;
             const {
@@ -24,23 +25,19 @@ module.exports = {
             } = data;
 
             if ( !name ) {
-                error(res, '【暱稱】必填');
-                return;
+                return appError('【暱稱】必填', next);
             }
 
             if ( !sex ) {
-                error(res,  '【性別】必填');
-                return;
+                return appError('【性別】必填', next);
             }
 
             if ( !email ) {
-                error(res, '【帳號】必填');
-                return;
+                return appError('【帳號】必填', next);
             }
 
             if ( !password ) {
-                error(res, '【密碼】必填');
-                return;
+                return appError('【密碼】必填', next);
             }
 
             data.password = await bcrypt.hash(data.password, 12);
@@ -48,9 +45,9 @@ module.exports = {
             const result = await UserModel.create(data);
             result.password = undefined;
 
-            success(res, result);
+            success(res, result, 201);
         } catch(err) {
-            error(res, err.message);
+            return appError(err.message, next);
         }
     }
 }

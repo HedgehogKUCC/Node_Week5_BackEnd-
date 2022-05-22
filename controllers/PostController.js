@@ -1,9 +1,10 @@
 const PostModel = require('../models/Post');
 const UserModel = require('../models/User');
-const { success, error } = require('../service/responseHandle');
+const appError = require('../service/appError');
+const success = require('../service/responseSuccess');
 
 module.exports = {
-    async getPosts(req, res) {
+    async getPosts(req, res, next) {
         try {
             const { s, q } = req.query;
             const timeSort = s === 'asc' ? 'createdAt' : '-createdAt';
@@ -14,10 +15,10 @@ module.exports = {
             }).sort(timeSort);
             success(res, result);
         } catch(err) {
-            error(res, err.message);
+            return appError(err.message, next);
         }
     },
-    async insertPost(req, res) {
+    async insertPost(req, res, next) {
         try {
             const data = req.body;
             const {
@@ -26,25 +27,22 @@ module.exports = {
             } = data;
 
             if ( !userID ) {
-                error(res, '請登入帳號');
-                return;
+                return appError('請登入帳號', next);
             }
 
             if ( !content ) {
-                error(res, '【貼文內容】必填');
-                return;
+                return appError('【貼文內容】必填', next);
             }
 
             const hasUserID = await UserModel.findById(userID).exec();
             if ( !hasUserID ) {
-                error(res, '請註冊帳號');
-                return;
+                return appError('請註冊帳號', next);
             }
 
             const result = await PostModel.create(data);
-            success(res, result);
+            success(res, result, 201);
         } catch(err) {
-            error(res, err.message);
+            return appError(err.message, next);
         }
     },
 }
