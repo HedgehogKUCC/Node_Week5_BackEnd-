@@ -7,7 +7,12 @@ dotenv.config(
     }
 )
 
+const DB = process.env.MongoDB.replace(
+    '<password>',
+    process.env.MongoDB_Password,
+)
+
 mongoose
-    .connect(process.env.MongoDB)
+    .connect(DB)
     .then(() => console.log('mongodb is connecting...'))
     .catch((err) => console.log(err.message));
