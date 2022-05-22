@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
+const handleErrorAsync = require('../service/handleErrorAsync');
 const PostController = require('../controllers/PostController');
 
-router.get('/', PostController.getPosts);
-router.post('/', PostController.insertPost);
+router.get('/', handleErrorAsync(PostController.getPosts));
+router.post('/', handleErrorAsync(PostController.insertPost));
 
 module.exports = router;
