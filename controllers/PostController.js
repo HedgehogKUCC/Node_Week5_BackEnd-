@@ -59,5 +59,27 @@ module.exports = {
             return appError('沒有這則貼文', next);
         }
         success(res, '成功刪除單筆貼文');
+    },
+    async delAllPosts(req, res, next) {
+        if ( req.originalUrl !== '/posts' ) {
+            return appError(`伺服器收到 ${req.originalUrl} 與 /posts 不符`, next);
+        }
+
+        const { userID } = req.body;
+
+        if ( !userID ) {
+            return appError('請登入帳號', next);
+        }
+
+        const hasUserID = await UserModel.findById(userID).exec();
+        if ( !hasUserID ) {
+            return appError('請註冊帳號', next);
+        }
+
+        const result = await PostModel.deleteMany();
+        if ( result.deletedCount === 0 ) {
+            return appError('已無貼文', next);
+        }
+        success(res, '成功刪除全部貼文');
     }
 }
