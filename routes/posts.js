@@ -8,5 +8,6 @@ router.get('/', handleErrorAsync(PostController.getPosts));
 router.post('/', handleErrorAsync(PostController.insertPost));
 router.delete('/', handleErrorAsync(PostController.delAllPosts));
 router.delete('/:id', handleErrorAsync(PostController.delSinglePost));
+router.patch('/:id', handleErrorAsync(PostController.updatePostContent));
 
 module.exports = router;

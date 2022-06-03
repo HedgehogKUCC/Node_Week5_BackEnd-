@@ -77,5 +77,39 @@ module.exports = {
             return appError('已無貼文', next);
         }
         success(res, '成功刪除全部貼文');
+    },
+    async updatePostContent(req, res, next) {
+        const { id } = req.params;
+        const data = req.body;
+        const {
+            userID,
+            content,
+        } = data;
+
+        if ( !userID ) {
+            return appError('請登入帳號', next);
+        }
+
+        if ( !content.trim() ) {
+            return appError('【貼文內容】請勿空白', next);
+        }
+
+        const hasUserID = await UserModel.findById(userID).exec();
+        if ( !hasUserID ) {
+            return appError('請註冊帳號', next);
+        }
+
+        const result = await PostModel.findByIdAndUpdate(
+            id,
+            {
+                content,
+                updatedAt: Date.now()
+            },
+            { returnDocument: 'after' }
+        );
+        if ( !result ) {
+            return appError('沒有這則貼文', next);
+        }
+        success(res, result);
     }
 }
