@@ -80,6 +80,14 @@ app.use((err, req, res, next) => {
         err.isOperational = true;
         return resErrorProd(err, res);
     }
+
+    if ( err.name === 'CastError' ) {
+        err.message = '傳入的值與伺服器定義型別有誤';
+        err.statusCode = 400;
+        err.isOperational = true;
+        return resErrorProd(err, res);
+    }
+
     resErrorProd(err, res);
 });
 
