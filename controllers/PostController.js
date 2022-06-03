@@ -45,10 +45,6 @@ module.exports = {
             return appError('請登入帳號', next);
         }
 
-        if ( !id ) {
-            return appError('請選擇一則貼文刪除', next);
-        }
-
         const hasUserID = await UserModel.findById(userID).exec();
         if ( !hasUserID ) {
             return appError('請註冊帳號', next);
