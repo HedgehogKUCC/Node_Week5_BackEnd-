@@ -6,5 +6,6 @@ const PostController = require('../controllers/PostController');
 
 router.get('/', handleErrorAsync(PostController.getPosts));
 router.post('/', handleErrorAsync(PostController.insertPost));
+router.delete('/:id', handleErrorAsync(PostController.delSinglePost));
 
 module.exports = router;

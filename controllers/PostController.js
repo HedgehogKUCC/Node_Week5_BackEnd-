@@ -37,4 +37,27 @@ module.exports = {
         const result = await PostModel.create(data);
         success(res, result, 201);
     },
+    async delSinglePost(req, res, next) {
+        const { userID } = req.body;
+        const { id } = req.params;
+
+        if ( !userID ) {
+            return appError('請登入帳號', next);
+        }
+
+        if ( !id ) {
+            return appError('請選擇一則貼文刪除', next);
+        }
+
+        const hasUserID = await UserModel.findById(userID).exec();
+        if ( !hasUserID ) {
+            return appError('請註冊帳號', next);
+        }
+
+        const result = await PostModel.findByIdAndDelete(id);
+        if ( !result ) {
+            return appError('沒有這則貼文', next);
+        }
+        success(res, '成功刪除單筆貼文');
+    }
 }
